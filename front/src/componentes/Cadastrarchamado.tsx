@@ -1,7 +1,6 @@
 import { useState } from "react";
 import type Chamado from "../models/Chamado";
 import axios from "axios";
-import {useNavigate} from 'react-router-dom';
 
 function CadastrarChamado() {
   const [descricao, setDescricao] = useState("");
@@ -59,11 +58,9 @@ function CadastrarChamado() {
             {loading ? "Enviando..." : "Cadastrar"}
           </button>
         </div>
-
-        {error && <p style={{ color: "red" }}>Erro: {error}</p>}
       </form>
     </div>
   );
 }
 
-export default CadastrarChamadoForm;
+export default CadastrarChamado;
