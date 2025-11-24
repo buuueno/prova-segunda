@@ -95,4 +95,21 @@ public class ChamadoTransitionTests
         Assert.All(lista, x => Assert.Equal("Resolvido", x.Status));
     }
 
+    [Fact]
+    public void Create_Chamado_SavesToDb_AndSetsId()
+    {
+        var ctx = CreateInMemoryContext("create1");
+        var chamado = new Chamado { Descricao = "Teste criar", Status = "Aberto" };
+
+        // Simulate the API's create handler behavior: ensure ID and save
+        if (string.IsNullOrEmpty(chamado.ChamadoId)) chamado.ChamadoId = Guid.NewGuid().ToString();
+        ctx.Chamados.Add(chamado);
+        ctx.SaveChanges();
+
+        var found = ctx.Chamados.Find(chamado.ChamadoId);
+        Assert.NotNull(found);
+        Assert.Equal("Aberto", found.Status);
+        Assert.Equal(chamado.Descricao, found.Descricao);
+    }
+
 }

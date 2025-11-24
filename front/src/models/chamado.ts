@@ -1,7 +1,6 @@
 export default interface Chamado {
-  id?: string;
-  nome: string;
-  quantidade: number;
-  preco: number;
+  chamadoId?: string;
+  Descricao: string;
+  status: string;
   criadoEm?: string;
 }

@@ -1,10 +1,16 @@
 import './App.css'
-import Cadastrarchamado from './componentes/Cadastrarchamado'
+import React from 'react';
+import CadastrarChamadoForm from '../componentes/CadastrarChamadoForm'
 
 function App() {
   return (
-    <div>
-      <Cadastrarchamado />
+      <div>
+        <CadastrarChamado />
+      </div>
+      <div>
+        <CadastrarChamadoForm />
+      </div>
+      </div>
     </div>
   )
 }
