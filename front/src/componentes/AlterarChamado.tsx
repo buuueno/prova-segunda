@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Chamado from "../models/Chamado";
+import type Chamado from "../models/Chamado";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -17,7 +17,7 @@ function AlterarChamado() {
 
 	async function buscarChamado() {
 		try {
-			const resposta = await axios.get<Chamado>(`http://localhost:5190/api/chamado/${id}`);
+			const resposta = await axios.get<Chamado>(`http://localhost:5000/api/chamado/${id}`);
 			setDescricao(resposta.data.Descricao);
 			setStatus(resposta.data.status);
 		} catch (err) {
@@ -34,12 +34,9 @@ function AlterarChamado() {
 		try {
 			setLoading(true);
 			setError(null);
-			const chamado: Chamado = {
-				chamadoId: id,
-				Descricao: descricao,
-				status: status,
+			const chamado: Chamado = {chamadoId: id, Descricao: descricao, status: status,
 			};
-			await axios.put(`http://localhost:5190/api/chamado/alterar/${id}`, chamado);
+			await axios.put(`http://localhost:5000/api/chamado/alterar/${id}`, chamado);
 			navigate("/");
 		} catch (err: any) {
 			setError(String(err?.message ?? err));
@@ -75,7 +72,7 @@ function AlterarChamado() {
 						{loading ? "Alterando..." : "Alterar"}
 					</button>
 				</div>
-				{error && <p style={{ color: "red" }}>Erro: {error}</p>}
+				{error && <p>Erro: {error}</p>}
 			</form>
 		</div>
 	);
