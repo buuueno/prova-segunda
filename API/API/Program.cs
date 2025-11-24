@@ -2,12 +2,13 @@ using API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDataContext>();
 
 var app = builder.Build();
 
-app.MapGet("/", () => "COLOQUE O SEU NOME");
+app.MapGet("/", () => "API de chamados");
 
 //ENDPOINTS DE TAREFA
 //GET: http://localhost:5273/api/chamado/listar
@@ -28,22 +29,56 @@ app.MapPost("/api/chamado/cadastrar", ([FromServices] AppDataContext ctx, [FromB
     return Results.Created("", chamado);
 });
 
-//PUT: http://localhost:5273/chamado/alterar/{id}
-app.MapPut("/api/chamado/alterar/{id}", ([FromServices] AppDataContext ctx, [FromRoute] string id) =>
+//PATCH: http://localhost:5273/api/chamado/alterar
+app.MapMethods("/api/chamado/alterar", new[] { "PATCH" }, ([FromServices] AppDataContext ctx, [FromBody] Chamado chamado) =>
 {
-    //Implementar a alteração do status do chamado
+    if (chamado is null || string.IsNullOrEmpty(chamado.ChamadoId))
+    {
+        return Results.NotFound();
+    }
+
+    // Find the existing chamado
+    var existing = ctx.Chamados.FirstOrDefault(c => c.ChamadoId == chamado.ChamadoId);
+    if (existing is null) return Results.NotFound();
+
+    // Only change the Status field according to the requested flow:
+    // "Aberto" -> "Em atendimento"
+    // "Em atendimento" -> "Resolvido"
+    if (existing.Status == "Aberto")
+    {
+        existing.Status = "Em atendimento";
+        ctx.SaveChanges();
+        return Results.Ok(existing);
+    }
+
+    if (existing.Status == "Em atendimento")
+    {
+        existing.Status = "Resolvido";
+        ctx.SaveChanges();
+        return Results.Ok(existing);
+    }
+
+    // If none of the two transitions apply, return the resource unchanged.
+    return Results.Ok(existing);
 });
+
 
 //GET: http://localhost:5273/chamado/naoconcluidas
 app.MapGet("/api/chamado/naoresolvidos", ([FromServices] AppDataContext ctx) =>
 {
-    //Implementar a listagem dos chamados não resolvidos
+    // Listar todos os chamados cujo status não é "Resolvido"
+    var lista = ctx.Chamados.Where(c => c.Status != "Resolvido").ToList();
+    if (lista.Any()) return Results.Ok(lista);
+    return Results.NotFound("Nenhum chamado não resolvido encontrado");
 });
 
 //GET: http://localhost:5273/chamado/concluidas
 app.MapGet("/api/chamado/resolvidos", ([FromServices] AppDataContext ctx) =>
 {
-    //Implementar a listagem dos chamados resolvidos
+    // Listar todos os chamados cujo status é "Resolvido"
+    var lista = ctx.Chamados.Where(c => c.Status == "Resolvido").ToList();
+    if (lista.Any()) return Results.Ok(lista);
+    return Results.NotFound("Nenhum chamado resolvido encontrado");
 });
 
 app.Run();

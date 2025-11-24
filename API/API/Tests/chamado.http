@@ -8,3 +8,7 @@ Content-Type: application/json
 {
     "descricao": "Trocar memórias"
 }
+
+### 
+
+PATCH http://localhost:5273/api/chamado/alterar

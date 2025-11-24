@@ -4,6 +4,8 @@ namespace API.Models;
 
 public class AppDataContext : DbContext
 {
+    public AppDataContext() { }
+    public AppDataContext(DbContextOptions<AppDataContext> options) : base(options) { }
     public DbSet<Chamado> Chamados { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
